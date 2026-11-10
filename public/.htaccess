@@ -1,0 +1,3 @@
+RewwriteEngine On
+RewwriteCond % {REQUEST_FILENAME} !-f
+RewwriteRule ^(.*)$ index.php?url=$1 [QSA,L]
