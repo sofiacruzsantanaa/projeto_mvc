@@ -1,24 +1,25 @@
 <?php
+
 namespace App\Models;
+
 use PDO;
 
 class Database
 {
-private static ?PDO $pdo = null;
-public static function connect(): PDO
-{
-$db = require __DIR__ . '/../../config/database.php';
-return self::$pdo ??= new PDO(
+    private static ?PDO $pdo = null;
 
-"mysql:host={$db['host']};dbname={$db['name']};charset={$db['char-
-set']}",
+    public static function connect(): PDO
+    {
+        $db = require __DIR__ . '/../../config/database.php';
 
-$db['user'],
-$db['pass'],
-[
-PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-]
-);
-}
+        return self::$pdo ??= new PDO(
+            "mysql:host={$db['host']};port={$db['port']};dbname={$db['name']};charset={$db['charset']}",
+            $db['user'],
+            $db['pass'],
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ]
+        );
+    }
 }
