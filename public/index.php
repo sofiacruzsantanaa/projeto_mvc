@@ -28,9 +28,10 @@ spl_autoload_register(function (string $class) {
 require __DIR__ . '/../app/helpers.php';
 
 // Interpretação da URL
+// Quando nenhuma URL for informada, a página inicial será Home.
 $url = explode(
     '/',
-    trim($_GET['url'] ?? 'user/index', '/')
+    trim($_GET['url'] ?? 'home/index', '/')
 );
 
 $controller =
