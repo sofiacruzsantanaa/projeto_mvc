@@ -5,11 +5,11 @@ namespace App\Controllers;
 use App\Models\User;
 use App\Validators\UserValidator;
 
-class Homecontroller
+class HomeController
 {
     public function index(): void
     {
-        $this->render('home/index', [
+        $this->render('home/blog-home', [
             'title' => 'Início',
             
             
