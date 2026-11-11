@@ -1,8 +1,6 @@
 <?php
-
 declare(strict_types=1);
 
-// Caminho base: '/projeto_mvc' quando estiver em subpasta.
 $base = dirname(dirname($_SERVER['SCRIPT_NAME']));
 
 define(
@@ -27,8 +25,7 @@ spl_autoload_register(function (string $class) {
 
 require __DIR__ . '/../app/helpers.php';
 
-// Interpretação da URL
-// Quando nenhuma URL for informada, a página inicial será Home.
+
 $url = explode(
     '/',
     trim($_GET['url'] ?? 'home/index', '/')
@@ -42,8 +39,6 @@ $controller =
 $method = $url[1] ?? 'index';
 
 $params = array_slice($url, 2);
-
-// Validação e despacho
 if (
     !class_exists($controller)
     || !method_exists($controller, $method)
@@ -53,3 +48,4 @@ if (
 }
 
 (new $controller())->$method(...$params);
+?>
