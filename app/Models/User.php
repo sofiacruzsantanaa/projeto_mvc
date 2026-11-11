@@ -2,21 +2,25 @@
 
 namespace App\Models;
 
-// Database pertence ao mesmo namespace App\Models.
-
 class User
 {
     public static function all(): array
     {
         return Database::connect()
-            ->query('SELECT id, name, email FROM users ORDER BY name')
+            ->query(
+                'SELECT id, name, last_name, email, cpf, birth_date
+                 FROM users
+                 ORDER BY name, last_name'
+            )
             ->fetchAll();
     }
 
     public static function find(int $id): ?array
     {
         $stmt = Database::connect()->prepare(
-            'SELECT id, name, email FROM users WHERE id = ?'
+            'SELECT id, name, last_name, email, cpf, birth_date
+             FROM users
+             WHERE id = ?'
         );
 
         $stmt->execute([$id]);
@@ -24,25 +28,91 @@ class User
         return $stmt->fetch() ?: null;
     }
 
-    public static function emailExists(string $email): bool
-    {
-        $stmt = Database::connect()->prepare(
-            'SELECT 1 FROM users WHERE email = ?'
-        );
+    public static function emailExists(
+        string $email,
+        ?int $ignoreId = null
+    ): bool {
+        $sql = 'SELECT 1 FROM users WHERE email = ?';
+        $params = [$email];
 
-        $stmt->execute([$email]);
+        if ($ignoreId !== null) {
+            $sql .= ' AND id <> ?';
+            $params[] = $ignoreId;
+        }
+
+        $stmt = Database::connect()->prepare($sql);
+        $stmt->execute($params);
 
         return (bool) $stmt->fetchColumn();
     }
 
-    public static function create(string $name, string $email): int
-    {
+    public static function cpfExists(
+        string $cpf,
+        ?int $ignoreId = null
+    ): bool {
+        $sql = 'SELECT 1 FROM users WHERE cpf = ?';
+        $params = [$cpf];
+
+        if ($ignoreId !== null) {
+            $sql .= ' AND id <> ?';
+            $params[] = $ignoreId;
+        }
+
+        $stmt = Database::connect()->prepare($sql);
+        $stmt->execute($params);
+
+        return (bool) $stmt->fetchColumn();
+    }
+
+    public static function create(
+        string $name,
+        string $lastName,
+        string $email,
+        string $cpf,
+        string $birthDate
+    ): int {
         $stmt = Database::connect()->prepare(
-            'INSERT INTO users (name, email) VALUES (?, ?)'
+            'INSERT INTO users
+                (name, last_name, email, cpf, birth_date)
+             VALUES (?, ?, ?, ?, ?)'
         );
 
-        $stmt->execute([$name, $email]);
+        $stmt->execute([
+            $name,
+            $lastName,
+            $email,
+            $cpf,
+            $birthDate,
+        ]);
 
         return (int) Database::connect()->lastInsertId();
+    }
+
+    public static function update(
+        int $id,
+        string $name,
+        string $lastName,
+        string $email,
+        string $cpf,
+        string $birthDate
+    ): bool {
+        $stmt = Database::connect()->prepare(
+            'UPDATE users
+             SET name = ?,
+                 last_name = ?,
+                 email = ?,
+                 cpf = ?,
+                 birth_date = ?
+             WHERE id = ?'
+        );
+
+        return $stmt->execute([
+            $name,
+            $lastName,
+            $email,
+            $cpf,
+            $birthDate,
+            $id,
+        ]);
     }
 }
