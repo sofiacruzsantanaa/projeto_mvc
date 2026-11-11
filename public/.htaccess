@@ -1,8 +1,8 @@
-
 RewriteEngine On
 
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# Encaminha a página inicial para public
+RewriteRule ^$ public/ [L]
 
-RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+# Encaminha as demais rotas para public
+RewriteRule ^(?!public/)(.*)$ public/$1 [L]
 
