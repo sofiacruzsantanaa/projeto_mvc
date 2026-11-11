@@ -1,4 +1,11 @@
+
+Options -Indexes
+
 RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+
+# Direciona a página inicial para a pasta public
+RewriteRule ^$ public/ [L]
+
+# Direciona os demais caminhos para public
+RewriteCond %{REQUEST_URI} !/public/
+RewriteRule ^(.*)$ public/$1 [L]
